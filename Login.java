@@ -56,7 +56,8 @@ public class Login extends JFrame implements FocusListener {
 	private JTextField txtDd;
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_2;
-	
+	private JLabel label_4;
+	private JLabel lblNewLabel_4;
 	/**
 	 * Launch the application.
 	 */
@@ -65,10 +66,8 @@ public class Login extends JFrame implements FocusListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
 					Login frame = new Login();
-					frame.setVisible(true);
-
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -83,11 +82,12 @@ public class Login extends JFrame implements FocusListener {
 	public Login() {
 		
 		DBConnection();
-		
+
 		lblNewLabel_2 = null;
 		lblNewLabel_3 = null;
 
 		setUndecorated(true);
+		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(200, 200, 900, 800);
 		contentPane = new JPanel();
@@ -130,6 +130,11 @@ public class Login extends JFrame implements FocusListener {
 		panel.add(lblNewLabel);
 		
 		JButton button = new JButton("로그인");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				LoginValidate();
+			}
+		});
 		button.setBounds(797, 40, 59, 25);
 		panel.add(button);
 		button.setMargin(new Insets(0, 0, 0, 0));
@@ -207,7 +212,6 @@ public class Login extends JFrame implements FocusListener {
 					InsertQuery();
 				}
 				else {
-				System.out.println(textField.getText());
 				lblNewLabel_3.setForeground(Color.RED);
 				lblNewLabel_2.setIcon(new ImageIcon("D:\\Downloads\\icons8-high-priority-48 (1).png"));
 				lblNewLabel_3.setText("필수항목이 제대로 입력되지 않았습니다.");
@@ -261,6 +265,16 @@ public class Login extends JFrame implements FocusListener {
 		lblNewLabel_3.setBounds(488, 617, 292, 40);
 		contentPane.add(lblNewLabel_3);
 		
+
+		lblNewLabel_4 = new JLabel("");
+		lblNewLabel_4.setSize(400, 30);
+		lblNewLabel_4.setLocation(490, 105);
+		contentPane.add(lblNewLabel_4);
+
+		label_4 = new JLabel("");
+		label_4.setBounds(450, 105, 50, 30);
+		contentPane.add(label_4);
+		
 		
         int panelHeight = contentPane.getHeight();
         int panelWidth = contentPane.getWidth();
@@ -293,7 +307,6 @@ public class Login extends JFrame implements FocusListener {
 		  pstmtsqlInsert.setDate(5, birthdate);
 		  
 		  pstmtsqlInsert.executeUpdate();
-		  System.out.println(pstmtsqlInsert);
 			
 		  } catch (Exception e) {
 			  e.printStackTrace();
@@ -321,4 +334,42 @@ public class Login extends JFrame implements FocusListener {
 	  public String getText(String JTextFieldHName) {
 		    return showingHint ? "" : JTextFieldHName;
 		  }
+
+	  public void LoginValidate() {
+		  try {
+		  String SQL = "select concat(surname, name), id, pwd from member where id = ?";
+				  PreparedStatement pstmtLogin = con.prepareStatement(SQL);
+				  pstmtLogin.setString(1, id_1.getText());
+				  
+		ResultSet rst = pstmtLogin.executeQuery();
+			String userID = null;
+			String pwd = null;
+			String userName = null;
+			
+			while(rst.next()) {
+				userName = rst.getString(1);
+				userID = rst.getString(2);
+				pwd = rst.getString(3);
+
+				if(pwd.equals(pwd_1.getText())) {
+					dispose();
+					new MainPage_TestBed(userID, userName);
+					
+				} else {
+					System.out.println("비밀번호 불일치");
+					
+
+				}
+				break;
+
+			}
+			label_4.setIcon(new ImageIcon("D:\\Downloads\\icons8-high-priority-48 (1).png"));
+			lblNewLabel_4.setForeground(Color.RED);
+			lblNewLabel_4.setText("아이디가 존재하지 않거나, 비밀번호가 일치하지 않습니다.");
+			
+		} catch (Exception e) {
+		  	e.printStackTrace();
+		}
+	 }
 }
+	  
