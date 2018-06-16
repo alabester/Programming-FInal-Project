@@ -36,7 +36,6 @@ import javax.swing.JRadioButton;
 import java.sql.*;
 
 public class Login extends JFrame implements FocusListener {
-
     public Connection con = null;
     public Statement st = null;
     public ResultSet rs = null;
