@@ -33,7 +33,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
-public class MainPage_TestBed extends JFrame {
+public class MyPage_TestBed extends JFrame {
 
     public Connection con = null;
     public PreparedStatement st = null;
@@ -53,14 +53,14 @@ public class MainPage_TestBed extends JFrame {
 
             @Override
             public void run() {
-                 MainPage_TestBed mn = new MainPage_TestBed();
+                 MyPage_TestBed mn = new MyPage_TestBed();
             }
         });
     }
 	/**
 	 * Create the frame.
 	 */
-	public MainPage_TestBed() {
+	public MyPage_TestBed() {
 
         JFrame frame = new JFrame("SpringLayout");
         frame.getContentPane().setBackground(new Color(233, 235, 238));
@@ -91,13 +91,12 @@ public class MainPage_TestBed extends JFrame {
 			st = con.prepareStatement(SQL);
 			rs = st.executeQuery();
 
-			Iterator it = contents.iterator();
+//			Iterator it = contents.iterator();
 			
-			while(rs.next())
-				{
+			while(rs.next()) {
 				contents.add(rs.getString("content"));
 				names.add(rs.getString("userID"));
-				}
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();

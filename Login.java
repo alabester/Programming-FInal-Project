@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.UIManager;
 import java.awt.Color;
@@ -40,6 +42,7 @@ public class Login extends JFrame implements FocusListener {
     public ResultSet rs = null;
     
     private PreparedStatement pstmtsqlInsert;
+    private PreparedStatement pstmtsqlSelect;
     
 	private JPanel contentPane;
 	private JTextField id_1;
@@ -56,6 +59,8 @@ public class Login extends JFrame implements FocusListener {
 	private JTextField txtDd;
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_2;
+	
+	private static String loginedId; // 로그인 되어 있는 아이디 static 변수로 선언
 	
 	/**
 	 * Launch the application.
@@ -87,9 +92,9 @@ public class Login extends JFrame implements FocusListener {
 		lblNewLabel_2 = null;
 		lblNewLabel_3 = null;
 
-		setUndecorated(true);
+		setUndecorated(true); // java 프레임 타이틀바 없앰
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(200, 200, 900, 800);
+		setBounds(200, 20, 900, 800);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -130,6 +135,13 @@ public class Login extends JFrame implements FocusListener {
 		panel.add(lblNewLabel);
 		
 		JButton button = new JButton("로그인");
+		button.addActionListener(new ActionListener() { // 로그인 버튼 클릭할 경우
+			public void actionPerformed(ActionEvent e) {
+				String id = id_1.getText();
+				String pwd = pwd_1.getText();
+				isLoginCheck(id, pwd);
+			}
+		});
 		button.setBounds(797, 40, 59, 25);
 		panel.add(button);
 		button.setMargin(new Insets(0, 0, 0, 0));
@@ -298,7 +310,44 @@ public class Login extends JFrame implements FocusListener {
 		  } catch (Exception e) {
 			  e.printStackTrace();
 		  }
+	  }
+	  
+	  public void isLoginCheck(String paramId, String paramPwd) { // 로그인 체크
+		  String SQL = "SELECT * FROM member WHERE id = ?";
+		  
+		  try {
+			  	pstmtsqlSelect = con.prepareStatement(SQL);
+				pstmtsqlSelect.setString(1, paramId);
+				rs = pstmtsqlSelect.executeQuery();
 
+				if (rs.next()) { // 아이디 존재할 경우
+					String pwd = rs.getString("pwd");
+					if (paramPwd.equals(pwd)){ // 비밀번호가 맞을 경우
+						loginedId = paramId; // desktop app 에서는 session 처리가 없기 떄문에 static 변수에 로그인 아이디 저장
+						JOptionPane.showMessageDialog(null, "로그인 성공했습니다.");
+						new MainPage_TestBed();
+						dispose();
+					} else { // 비밀번호가 틀릴 경우
+						JOptionPane.showMessageDialog(null, "비밀번호가 틀립니다.");
+						pwd_1.setText("");
+					}
+				} else { // 아이디 존재하지 않을 경우
+					JOptionPane.showMessageDialog(null, "아이디가 존재하지 않습니다.");
+					id_1.setText("");
+					pwd_1.setText("");
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} 
+//		  finally { 
+//				try {
+//					if(rs!=null) rs.close();
+//					if(pstmtsqlSelect!=null) pstmtsqlSelect.close();
+//					if(con!=null) con.close();
+//				} catch (SQLException e) {
+//					
+//				}
+//			}
 	  }
 	  
 	  public void focusLost(FocusEvent e) {
