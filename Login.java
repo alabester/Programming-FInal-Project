@@ -60,7 +60,7 @@ public class Login extends JFrame implements FocusListener {
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_2;
 	
-	private static String loginedId; // 로그인 되어 있는 아이디 static 변수로 선언
+	public static String loginedName; // 로그인 되어 있는 사람이름 static 변수로 선언
 	
 	/**
 	 * Launch the application.
@@ -142,11 +142,11 @@ public class Login extends JFrame implements FocusListener {
 				isLoginCheck(id, pwd);
 			}
 		});
-		button.setBounds(797, 40, 59, 25);
+		button.setBounds(790, 41, 71, 25);
 		panel.add(button);
 		button.setMargin(new Insets(0, 0, 0, 0));
 		button.setPreferredSize(new Dimension(59, 25));
-		button.setForeground(Color.WHITE);
+		button.setForeground(Color.BLACK);
 		button.setFont(new Font("다음_Regular", Font.PLAIN, 15));
 		button.setBackground(new Color(72, 103, 170));
 		
@@ -207,7 +207,7 @@ public class Login extends JFrame implements FocusListener {
 		contentPane.add(label_2);
 		
 		JButton btnNewButton = new JButton("가입하기");
-		btnNewButton.setForeground(Color.WHITE);
+		btnNewButton.setForeground(Color.BLACK);
 		btnNewButton.setBackground(new Color(72,103,170));
 		btnNewButton.setFont(new Font("다음_Regular", Font.PLAIN, 15));
 		btnNewButton.addActionListener(new ActionListener() {
@@ -323,7 +323,8 @@ public class Login extends JFrame implements FocusListener {
 				if (rs.next()) { // 아이디 존재할 경우
 					String pwd = rs.getString("pwd");
 					if (paramPwd.equals(pwd)){ // 비밀번호가 맞을 경우
-						loginedId = paramId; // desktop app 에서는 session 처리가 없기 떄문에 static 변수에 로그인 아이디 저장
+						String name = rs.getString("surname") + rs.getString("name"); 
+						loginedName = name; // desktop app 에서는 session 처리가 없기 떄문에 static 변수에 로그인한 사람이름 저장
 						JOptionPane.showMessageDialog(null, "로그인 성공했습니다.");
 						new MainPage_TestBed();
 						dispose();

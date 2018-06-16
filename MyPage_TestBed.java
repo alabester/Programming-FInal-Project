@@ -32,6 +32,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
+import java.awt.TextField;
 
 public class MyPage_TestBed extends JFrame {
 
@@ -280,6 +281,11 @@ public class MyPage_TestBed extends JFrame {
         btnNewButton.setContentAreaFilled(false);
         btnNewButton_1.setBounds(784, 24, 105, 34);
         panel.add(btnNewButton_1);
+        
+        JLabel lblNewLabel_2 = new JLabel("\t\t" + Login.loginedName);
+        lblNewLabel_2.setIcon(new ImageIcon("/Users/seail/Desktop/imagefile/facebook_man_resize.png"));
+        lblNewLabel_2.setBounds(1104, 6, 127, 68);
+        panel.add(lblNewLabel_2);
         
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(110, 100, 280, 900);
