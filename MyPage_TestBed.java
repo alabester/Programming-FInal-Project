@@ -33,14 +33,18 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MyPage_TestBed extends JFrame {
 
     public Connection con = null;
     public PreparedStatement st = null;
     public ResultSet rs = null;
-	ArrayList<String> contents = new ArrayList<>();
-	ArrayList<String> names = new ArrayList<>();
+	ArrayList<String> myContents = new ArrayList<>();
+//	ArrayList<String> myName = new ArrayList<>();
 	
 	private JPanel contentPane;
 	private JTextField textField;
@@ -54,20 +58,21 @@ public class MyPage_TestBed extends JFrame {
 
             @Override
             public void run() {
-                 MyPage_TestBed mn = new MyPage_TestBed();
+                 MyPage_TestBed mn = new MyPage_TestBed("alabester@naver.com", "AA");
             }
         });
     }
 	/**
 	 * Create the frame.
 	 */
-	public MyPage_TestBed() {
+	
+	public MyPage_TestBed(String userID, String userName) {
 
         JFrame frame = new JFrame("SpringLayout");
         frame.getContentPane().setBackground(new Color(233, 235, 238));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JScrollPane scroll = new JScrollPane();
-        scroll.setBounds(400, 100, 640, 900);
+        scroll.setBounds(400, 100, 1000, 900);
         Container contentPane = frame.getContentPane();
         SpringLayout layout = new SpringLayout();
         JPanel mainPanel = new JPanel();
@@ -79,24 +84,24 @@ public class MyPage_TestBed extends JFrame {
 		
 		try {
 
-			
-			String Count = "select count(*) from content";
-			st = con.prepareStatement(Count);
+			String myContentCount = "select count(*) from myinfo where myUserID = ?"; //
+			st = con.prepareStatement(myContentCount);
+			st.setString(1, userID);
 			rs = st.executeQuery();
 				while(rs.next()) {
 					rowCnt = rs.getInt(1);
 				}
 			System.out.println(rowCnt);
 			
-			String SQL = "select * from content order by contentID desc";
-			st = con.prepareStatement(SQL);
+			String contentSelect = "select myContent from myinfo where myUserID = ? order by myContentID desc"; // myContentID 내림차순으로 글 조회 
+			st = con.prepareStatement(contentSelect);
+			st.setString(1, userID);
 			rs = st.executeQuery();
 
 //			Iterator it = contents.iterator();
 			
 			while(rs.next()) {
-				contents.add(rs.getString("content"));
-				names.add(rs.getString("userID"));
+				myContents.add(rs.getString("myContent"));
 			}
 			
 		} catch (Exception e) {
@@ -105,15 +110,15 @@ public class MyPage_TestBed extends JFrame {
         
         
         int j = 300;
-        int initialHeight = 0;
-        int initialX = 0;
+//        int initialHeight = 0;
+//        int initialX = 0;
         
         
         	JPanel Write = new JPanel();
         	layout.putConstraint(SpringLayout.NORTH, Write, 0, SpringLayout.NORTH, mainPanel);
         	layout.putConstraint(SpringLayout.WEST, Write, 0, SpringLayout.WEST, mainPanel);
         	
-        	Write.setPreferredSize(new Dimension(640,290));
+        	Write.setPreferredSize(new Dimension(1000,290));
         	Write.setBackground(Color.WHITE);
         	mainPanel.add(Write);
         	Write.setLayout(null);
@@ -124,7 +129,7 @@ public class MyPage_TestBed extends JFrame {
         	Write.add(Tester);
         	
         	textField = new JTextField();
-        	textField.setBounds(50, 50, 580, 190);
+        	textField.setBounds(50, 50, 928, 190);
         	Write.add(textField);
         	textField.setColumns(10);
         	
@@ -133,9 +138,9 @@ public class MyPage_TestBed extends JFrame {
         	Write.add(lblNewLabel_1);
         	
         	JButton btnNewButton = new JButton("\uAC8C\uC2DC");
-        	btnNewButton.setForeground(Color.WHITE);
+        	btnNewButton.setForeground(Color.BLACK);
         	btnNewButton.setBackground(new Color(66, 103, 178));
-        	btnNewButton.setBounds(10, 250, 620, 30);
+        	btnNewButton.setBounds(50, 250, 928, 30);
         	Write.add(btnNewButton);
         	
         for(int i =0;i<rowCnt;i++){
@@ -167,7 +172,7 @@ public class MyPage_TestBed extends JFrame {
 		    		gbc_label.gridy = 0;
 		    		Modeler.add(label, gbc_label);
 		    		 
-		       		JLabel text = new JLabel(names.get(i));
+		       		JLabel text = new JLabel(userID);
 		       		
 		       		
 		       		
@@ -185,7 +190,7 @@ public class MyPage_TestBed extends JFrame {
 		    		gbc_lblNewLabel_1.gridy = 1;
 		    		Modeler.add(text2, gbc_lblNewLabel_1);
 		
-		    		String GetText = contents.get(i);
+		    		String GetText = myContents.get(i);
 		    		String[] GetTextArray;
 		
 		    		int k = 0; // 50자로 자른 줄의 갯수, Initialize
@@ -198,7 +203,7 @@ public class MyPage_TestBed extends JFrame {
 		       		StartText = GetText.substring(0,70);
 		       		RemainText = GetText.substring(70, GetText.length());
 		    		} else {
-		    			RemainText = contents.get(i);
+		    			RemainText = myContents.get(i);
 		    		}
 		    		
 		       		PerfectText = StartText + "<br />";
@@ -233,10 +238,10 @@ public class MyPage_TestBed extends JFrame {
 		//        layout.putConstraint(SpringLayout.WEST, Modeler, 20, SpringLayout.EAST,
 		//                        label);
 		        j+=150+k*10;
-		        initialX+=100;
-		        initialHeight+=100;
+//		        initialX+=100;
+//		        initialHeight+=100;
 		        mainPanel.add(Modeler);
-		    	Modeler.setPreferredSize(new Dimension(640, 150+k*10));
+		    	Modeler.setPreferredSize(new Dimension(1000, 150+k*10));
         }
         frame.getContentPane().setLayout(null); // 컴포넌트의 크기와 위치를 일일이 다 지정해주어야 된다.
         mainPanel.setPreferredSize(new Dimension(mainPanel.getWidth(), j)); // 이 메소드는 Dimension객체를 인자로 받으면서 해당 콤포넌트의 '기본크기'를 결정
@@ -267,7 +272,6 @@ public class MyPage_TestBed extends JFrame {
         
         textField_1 = new JTextField();
         textField_1.setBounds(184, 24, 600, 34);
-        btnNewButton.setBorder(emptyBorder);
 
         panel.add(textField_1);
         textField_1.setColumns(10);
@@ -277,31 +281,62 @@ public class MyPage_TestBed extends JFrame {
         JButton btnNewButton_1 = new JButton("");
         btnNewButton_1.setIcon(new ImageIcon("D:\\Downloads\\icons8-search-25.png"));
         btnNewButton_1.setBackground(new Color(246, 247, 249));
-        btnNewButton.setBorder(emptyBorder);
         btnNewButton.setContentAreaFilled(false);
         btnNewButton_1.setBounds(784, 24, 105, 34);
         panel.add(btnNewButton_1);
         
-        JLabel lblNewLabel_2 = new JLabel("\t\t" + Login.loginedName);
+//        JButton btnNewButton_2 = new JButton("\uAC8C\uC2DC\uD558\uAE30");
+//        btnNewButton_2.setBackground(new Color(72,103,170));
+//        btnNewButton_2.setForeground(Color.WHITE);
+//        btnNewButton_2.addActionListener(new ActionListener() {
+//        	public void actionPerformed(ActionEvent arg0) {
+//        		InsertContent(userID, textField.getText());
+//                lblNewLabel_3.setIcon(new ImageIcon("D:\\Downloads\\icons8-checked-40.png"));
+//        		label.setForeground(Color.BLUE);
+//        		label.setText("성공적으로 입력되었습니다.");
+//        	}
+//        });
+//        
+//        btnNewButton_2.setBounds(50, 250, 580, 27);
+        JLabel lblNewLabel_2 = new JLabel("\t\t" + userName + "("+userID+")");
         lblNewLabel_2.setIcon(new ImageIcon("/Users/seail/Desktop/imagefile/facebook_man_resize.png"));
-        lblNewLabel_2.setBounds(1104, 6, 127, 68);
+        lblNewLabel_2.setForeground(Color.WHITE);
+        lblNewLabel_2.setBounds(1104, 6, 260, 68);
+        lblNewLabel_2.addMouseListener(new MouseAdapter() {
+	        	@Override
+	        	public void mouseClicked(MouseEvent e) {
+	        			dispose();
+					new MyPage_TestBed(userID, userName);
+	        	}
+	        	@Override
+	        	public void mouseEntered(MouseEvent e) {
+	        			lblNewLabel_2.setForeground(Color.BLACK);
+	        	}
+	        	@Override
+	        	public void mouseExited(MouseEvent e) {
+	        			lblNewLabel_2.setForeground(Color.WHITE);
+	        	}
+        });
         panel.add(lblNewLabel_2);
         
-        JScrollPane scrollPane = new JScrollPane();
+        JScrollPane scrollPane = new JScrollPane(); // 프로필 
         scrollPane.setBounds(110, 100, 280, 900);
         scrollPane.setBackground(Color.WHITE);
         
         frame.getContentPane().add(scrollPane);
-        
-        
-        JScrollPane scrollPane_1 = new JScrollPane();
-        scrollPane_1.setBounds(1050, 100, 280, 900);
-        scrollPane_1.setBackground(Color.WHITE);
-        frame.getContentPane().add(scrollPane_1);
-        //mainWindow.add(contentPane);
         frame.setSize(1440, 1000);
 		frame.setUndecorated(true);
         frame.setVisible(true);
+//        
+//        JScrollPane scrollPane_1 = new JScrollPane();
+//        scrollPane_1.setBounds(1050, 100, 280, 900);
+//        scrollPane_1.setBackground(Color.WHITE);
+//        frame.getContentPane().add(scrollPane_1);
+//        //mainWindow.add(contentPane);
+//        frame.setSize(1440, 1000);
+//        frame.setUndecorated(true);
+//        frame.setVisible(true);
+
 	    }
 	
 	  public void DBConnection() {
