@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -84,12 +85,17 @@ public class MyPage_TestBed extends JFrame {
         
         SpringLayout layout = new SpringLayout();
         SpringLayout Friendlayout = new SpringLayout();
+        SpringLayout Searchlayout = new SpringLayout();
         
         JPanel mainPanel = new JPanel();
         JPanel friendPanel = new JPanel();
+        JPanel searchPanel = new JPanel();
+        
+        searchPanel.setBackground(Color.WHITE);
         
         mainPanel.setLayout(layout);
         friendPanel.setLayout(Friendlayout);
+        searchPanel.setLayout(Searchlayout);
 
         DBConnection();
 		
@@ -310,6 +316,7 @@ public class MyPage_TestBed extends JFrame {
         frame.getContentPane().setLayout(null); // 컴포넌트의 크기와 위치를 일일이 다 지정해주어야 된다.
         mainPanel.setPreferredSize(new Dimension(mainPanel.getWidth(), j)); // 이 메소드는 Dimension객체를 인자로 받으면서 해당 콤포넌트의 '기본크기'를 결정
         scroll.setPreferredSize(new Dimension(100,100)); //사이즈 정보를 가지고 있는 객체를 이용해 패널의 사이즈 지정
+        scroll.setViewportView(searchPanel);
         scroll.setViewportView(mainPanel); //스크롤 팬 위에 패널을 올린다.
         scroll.setBackground(new Color(233, 235, 238));
         scroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -341,6 +348,90 @@ public class MyPage_TestBed extends JFrame {
         textField_1.setColumns(10);
         
         JButton btnNewButton_1 = new JButton(""); // 검색버튼
+        btnNewButton_1.addMouseListener(new MouseAdapter() { // 검색기능
+        	@Override
+        	public void mouseClicked(MouseEvent arg0) {
+				if(searchPanel.isShowing()) {
+			    	searchPanel.removeAll();
+			    	searchPanel.repaint();
+				}
+
+        		ResultSet SearchResult = Search();
+        		
+        		int height = 0;
+                scroll.setViewportView(searchPanel);
+        	try {
+        		if(Search().next()) { // 찾는 사람이 존재한다면
+
+        			while(SearchResult.next()) {
+
+					JPanel SearchModeler = new JPanel();
+
+					SearchModeler.setBackground(Color.WHITE);
+ 		
+					GridBagLayout gbl_panel = new GridBagLayout();
+					gbl_panel.columnWidths = new int[]{50, 346, 0};
+					gbl_panel.rowHeights = new int[]{0, 0};
+					gbl_panel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+					gbl_panel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+					SearchModeler.setLayout(gbl_panel);
+					
+					JLabel lblNewLabel = new JLabel("");
+					lblNewLabel.setIcon(new ImageIcon("D:\\Downloads\\icons8-user-avatar-filled-50.png"));
+					GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+					gbc_lblNewLabel.fill = GridBagConstraints.VERTICAL;
+					gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+					gbc_lblNewLabel.gridx = 0;
+					gbc_lblNewLabel.gridy = 0;
+					SearchModeler.add(lblNewLabel, gbc_lblNewLabel);
+					
+					JLabel lblNewLabel_1 = new JLabel(SearchResult.getString(1)+"("+SearchResult.getString(2)+")");
+					GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+					gbc_lblNewLabel_1.gridx = 1;
+					gbc_lblNewLabel_1.gridy = 0;
+					SearchModeler.add(lblNewLabel_1, gbc_lblNewLabel_1);    	
+					
+					if(friends.contains(SearchResult.getString(2))) {
+						JButton lblNewButton_1 = new JButton("친구입니다.");
+						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
+						lblNewButton_1.setEnabled(false);
+						gbc_lblNewButton_1.gridx = 2;
+						gbc_lblNewButton_1.gridy = 0;
+						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);
+						
+					}	else { 
+						JButton lblNewButton_1 = new JButton("친구 추가");
+						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
+						gbc_lblNewButton_1.gridx = 2;
+						gbc_lblNewButton_1.gridy = 0;
+						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);						
+					}
+					
+				      Searchlayout.putConstraint(SpringLayout.NORTH, SearchModeler, height, SpringLayout.NORTH,
+				              contentPane);
+
+				      height += 50;
+				      searchPanel.add(SearchModeler);
+				    	SearchModeler.setPreferredSize(new Dimension(640, 50));
+        			}
+
+				}
+				 else { // 찾는 사람이 존재하지 않으면
+					 	
+//					scroll.setViewportView(NothingPanel);
+//	        			NothingPanel.setBackground(Color.WHITE);
+	        			
+	        		}
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            searchPanel.setPreferredSize(new Dimension(searchPanel.getWidth(), height));
+
+        	}
+        });
+        
         btnNewButton_1.setIcon(new ImageIcon("D:\\Downloads\\icons8-search-25.png"));
         btnNewButton_1.setBackground(new Color(246, 247, 249));
         btnNewButton_1.setBounds(784, 24, 105, 34);
@@ -523,6 +614,23 @@ public class MyPage_TestBed extends JFrame {
 			  e.printStackTrace();
 		  }
 	 }
+	  
+	  public ResultSet Search() { // 검색
+		  try {
+			  String SearchSQL = "select concat(surname, name), id from member where concat(surname, name) like ?";
+			  st = con.prepareStatement(SearchSQL);
+			  st.setString(1, "%" + textField_1.getText() + "%");
+			  
+			  ResultSet Searchrs = st.executeQuery();
+//			  while(Searchrs.next()) {
+//				  System.out.println(Searchrs.getString(1));
+//			  }
+			  return Searchrs;		  
+	       } catch (Exception e) {
+	    	   e.printStackTrace();
+	    	   return null;
+	       }
+	  }
 	  
 	  public void DBConnection() {
 		  try {
