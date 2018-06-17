@@ -534,8 +534,8 @@ public class MainPage_TestBed extends JFrame {
 
         
         
-        JButton btnNewButton_1 = new JButton("");
-        btnNewButton_1.addActionListener(new ActionListener() {
+        JButton btnNewButton_1 = new JButton(""); // 검색버튼
+        btnNewButton_1.addActionListener(new ActionListener() { // 검색기능
         	public void actionPerformed(ActionEvent arg0) {
         	}
         });
@@ -552,7 +552,7 @@ public class MainPage_TestBed extends JFrame {
         		int height = 0;
                 scroll.setViewportView(searchPanel);
         	try {
-        		if(Search().next()) {
+        		if(Search().next()) { // 찾는 사람이 존재한다면
 
         			while(SearchResult.next()) {
         			String SrchName = SearchResult.getString(2);
@@ -639,7 +639,7 @@ public class MainPage_TestBed extends JFrame {
         			}
 
 				}
-				 else {
+				 else { // 찾는 사람이 존재하지 않으면
 					 	
 					 	scroll.setViewportView(NothingPanel);
 	        			NothingPanel.setBackground(Color.WHITE);

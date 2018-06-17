@@ -86,11 +86,13 @@ public class MyPage_TestBed extends JFrame {
         SpringLayout layout = new SpringLayout();
         SpringLayout Friendlayout = new SpringLayout();
         SpringLayout Searchlayout = new SpringLayout();
+        SpringLayout Pendinglayout = new SpringLayout();
         
         JPanel mainPanel = new JPanel();
         JPanel friendPanel = new JPanel();
         JPanel searchPanel = new JPanel();
         JPanel NothingPanel = new JPanel();
+        JPanel pendingPanel = new JPanel();
         
         searchPanel.setBackground(Color.WHITE);
         
@@ -98,7 +100,8 @@ public class MyPage_TestBed extends JFrame {
         friendPanel.setLayout(Friendlayout);        
         searchPanel.setLayout(Searchlayout);
         NothingPanel.setLayout(null);
-
+        pendingPanel.setLayout(Pendinglayout);
+        
         DBConnection();
 		
 		try {
@@ -331,8 +334,161 @@ public class MyPage_TestBed extends JFrame {
 
         JScrollBar vertical = scroll.getVerticalScrollBar();
         vertical.setPreferredSize(new Dimension(0,0));
-
         
+        JPanel panel_1 = new JPanel();
+        panel_1.setBounds(1150, 55, 225, 70);
+        frame.getContentPane().add(panel_1);
+	    	panel_1.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0,0,0,0,new Color(233, 235, 238)),new EtchedBorder()));
+	    	GridBagLayout gbl_panel_1 = new GridBagLayout();
+	    	gbl_panel_1.columnWidths = new int[]{198, 0, 0};
+	    	gbl_panel_1.rowHeights = new int[]{0, 0, 0};
+	    	gbl_panel_1.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+	    	gbl_panel_1.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+	    	panel_1.setLayout(gbl_panel_1);
+	    	
+	    	JLabel lblNewLabel_5 = new JLabel("\uB85C\uADF8\uC544\uC6C3");
+	    	lblNewLabel_5.addMouseListener(new MouseAdapter() {
+	    		@Override
+	    		public void mouseClicked(MouseEvent arg1) {
+	    			frame.dispose();
+	    			new Login();
+	    		}
+	    	});
+	    	GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
+	    	gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 5);
+	    	gbc_lblNewLabel_5.gridx = 0;
+	    	gbc_lblNewLabel_5.gridy = 0;
+	    	panel_1.add(lblNewLabel_5, gbc_lblNewLabel_5);
+	    	
+	    	JLabel lblNewLabel_6 = new JLabel("\uC0C8 \uCE5C\uAD6C");
+	    	lblNewLabel_6.addMouseListener(new MouseAdapter() {
+	    		@Override
+	    		public void mouseClicked(MouseEvent arg0) {
+	    			try {
+	    			ArrayList<String> Pending = new ArrayList<>();
+	    			
+	    			String PendingFriendSQL = "select user_id from pendingfriend where target_id = ?";
+	    			PreparedStatement SQLpstmt = con.prepareStatement(PendingFriendSQL);
+	    			SQLpstmt.setString(1, userID);
+	    			ResultSet Pendingrs = SQLpstmt.executeQuery();
+	    			
+
+	    			while(Pendingrs.next()) {
+
+	    				Pending.add(Pendingrs.getString(1));
+	    			}
+	    			
+	    			int pendingHeight = 0;
+	    			
+	    				for(int z = 0; z < CheckPendingFriends(userID); z++) {
+	    					JPanel PendingModeler = new JPanel();
+	    					PendingModeler.setBackground(Color.WHITE);
+	    					        		
+	    					GridBagLayout gbl_panel = new GridBagLayout();
+	    					gbl_panel.columnWidths = new int[]{50, 346, 0};
+	    					gbl_panel.rowHeights = new int[]{0, 0};
+	    					gbl_panel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+	    					gbl_panel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+	    					PendingModeler.setLayout(gbl_panel);
+	    					
+	    					JLabel lblNewLabel = new JLabel("");
+	    					lblNewLabel.setIcon(new ImageIcon("D:\\Downloads\\icons8-user-avatar-filled-50.png"));
+	    					GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+	    					gbc_lblNewLabel.fill = GridBagConstraints.VERTICAL;
+	    					gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+	    					gbc_lblNewLabel.gridx = 0;
+	    					gbc_lblNewLabel.gridy = 0;
+	    					PendingModeler.add(lblNewLabel, gbc_lblNewLabel);
+	    					
+	    					JLabel lblNewLabel_1 = new JLabel(Pending.get(0));
+	    					GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+	    					gbc_lblNewLabel_1.gridx = 1;
+	    					gbc_lblNewLabel_1.gridy = 0;
+	    					PendingModeler.add(lblNewLabel_1, gbc_lblNewLabel_1);    	
+	         
+	    					JButton lblNewLabel_2 = new JButton("수락");
+	    					lblNewLabel_2.addActionListener(new ActionListener() {
+	    						public void actionPerformed(ActionEvent arg0) {
+	    							try {
+	    							String SQL = "delete from pendingfriend where user_id = ? and target_id = ?";
+	    							PreparedStatement pstmtDelete = con.prepareStatement(SQL);
+	    							
+	    							pstmtDelete.setString(1, userID);
+	    							pstmtDelete.setString(2, lblNewLabel_1.getText());
+	    							
+	    							pstmtDelete.executeUpdate();
+	    							
+	    							SQL = "delete from pendingfriend where target_id = ? and user_id = ?";
+	    							pstmtDelete = con.prepareStatement(SQL);
+	    							
+	    							pstmtDelete.setString(1, userID);
+	    							pstmtDelete.setString(2, lblNewLabel_1.getText());
+	    							
+	    							pstmtDelete.executeUpdate();
+	    							
+	    							SQL = "insert into friendlist values (?, ?)";
+	    									
+	    							PreparedStatement pstmtInsert = con.prepareStatement(SQL);
+	    							
+	    							pstmtInsert.setString(1, userID);
+	    							pstmtInsert.setString(2, lblNewLabel_1.getText());
+	    							
+	    							pstmtInsert.executeUpdate();
+	    							
+	    							SQL = "insert into friendlist values (?, ?)";
+	    							
+	    							pstmtInsert = con.prepareStatement(SQL);
+	    							
+	    							pstmtInsert.setString(1, lblNewLabel_1.getText());
+	    							pstmtInsert.setString(2, userID);
+	    							
+	    							pstmtInsert.executeUpdate();
+	    							
+	    							frame.dispose();
+	    							new MyPage_TestBed(userID, userName);
+	    							
+	    							
+	    							} catch (Exception e) {
+	    								e.printStackTrace();
+	    							}
+	    							
+	    						
+	    						}
+	    					});
+	    					GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+	    					gbc_lblNewLabel_2.gridx = 2;
+	    					gbc_lblNewLabel_2.gridy = 0;
+	    					PendingModeler.add(lblNewLabel_2, gbc_lblNewLabel_2);
+	    					Pendinglayout.putConstraint(SpringLayout.NORTH, PendingModeler, pendingHeight, SpringLayout.NORTH,
+	    				              contentPane);
+
+	    				      pendingHeight += 50;
+	    				      pendingPanel.add(PendingModeler);
+	    				      PendingModeler.setPreferredSize(new Dimension(640, 50));
+	    				}
+	    			scroll.setViewportView(pendingPanel);
+	    			} catch (Exception e) {
+	    				e.printStackTrace();
+	    			}
+	    			
+	    			
+	    			
+	    		}
+	    	});
+	    	GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
+	    	gbc_lblNewLabel_6.insets = new Insets(0, 0, 0, 5);
+	    	gbc_lblNewLabel_6.gridx = 0;
+	    	gbc_lblNewLabel_6.gridy = 1;
+	    	panel_1.add(lblNewLabel_6, gbc_lblNewLabel_6);
+	    	
+	    	JLabel lblNewLabel_8 = new JLabel("%d");
+	    	GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
+	    	gbc_lblNewLabel_8.gridx = 1;
+	    	gbc_lblNewLabel_8.gridy = 1;
+	    	panel_1.add(lblNewLabel_8, gbc_lblNewLabel_8);
+	    	lblNewLabel_8.setText(Integer.toString(CheckPendingFriends(userID)));
+	    	panel_1.setVisible(false);
+	    	
         contentPane.add(scroll);
         mainPanel.setBackground(new Color(233, 235, 238));
         
@@ -355,7 +511,11 @@ public class MyPage_TestBed extends JFrame {
         textField_1.setColumns(10);
         
         JButton btnNewButton_1 = new JButton(""); // 검색버튼
-        btnNewButton_1.addMouseListener(new MouseAdapter() { // 검색기능
+        btnNewButton_1.addActionListener(new ActionListener() { // 검색기능
+        	public void actionPerformed(ActionEvent arg0) {
+        	}
+        });
+        btnNewButton_1.addMouseListener(new MouseAdapter() {
         	@Override
         	public void mouseClicked(MouseEvent arg0) {
 				if(searchPanel.isShowing()) {
@@ -371,7 +531,7 @@ public class MyPage_TestBed extends JFrame {
         		if(Search().next()) { // 찾는 사람이 존재한다면
 
         			while(SearchResult.next()) {
-
+        			String SrchName = SearchResult.getString(2);
 					JPanel SearchModeler = new JPanel();
 
 					SearchModeler.setBackground(Color.WHITE);
@@ -406,8 +566,40 @@ public class MyPage_TestBed extends JFrame {
 						gbc_lblNewButton_1.gridy = 0;
 						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);
 						
-					}	else { 
+					}	
+					else if(SrchName.toString().equals(userID.toString())) {
+						JButton lblNewButton_1 = new JButton("자기 자신입니다.");
+								lblNewButton_1.setEnabled(false);
+						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
+						gbc_lblNewButton_1.gridx = 2;
+						gbc_lblNewButton_1.gridy = 0;
+						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);						
+						
+					} else
+						
+					{ 
 						JButton lblNewButton_1 = new JButton("친구 추가");
+				        lblNewButton_1.addActionListener(new ActionListener() {
+				        	public void actionPerformed(ActionEvent arg0) {
+				        		
+				        		try {
+				        		String SQL = "insert into pendingfriend values (?, ?)";
+				        		PreparedStatement pstmtInsert2 = con.prepareStatement(SQL);
+				        		
+				        		pstmtInsert2.setString(1, userID);
+				        		System.out.println(userID);
+				        		pstmtInsert2.setString(2, SrchName);
+				        		System.out.println(SrchName);
+				        		pstmtInsert2.executeUpdate();
+				        		
+				        		lblNewButton_1.setText("신청했습니다.");
+				        		lblNewButton_1.setEnabled(false);
+				        		} catch (SQLException e) {
+				        		lblNewButton_1.setText("이미 신청했습니다.");
+				        		lblNewButton_1.setEnabled(false);
+				        		}
+				        	}
+				        });
 						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
 						gbc_lblNewButton_1.gridx = 2;
 						gbc_lblNewButton_1.gridy = 0;
@@ -425,7 +617,7 @@ public class MyPage_TestBed extends JFrame {
 				}
 				 else { // 찾는 사람이 존재하지 않으면
 					 	
-					scroll.setViewportView(NothingPanel);
+					 	scroll.setViewportView(NothingPanel);
 	        			NothingPanel.setBackground(Color.WHITE);
 	        			
 	        		}
@@ -479,7 +671,7 @@ public class MyPage_TestBed extends JFrame {
         JLabel lblNewLabel_2 = new JLabel("\t\t" + userName + "("+userID+")");
         lblNewLabel_2.setIcon(new ImageIcon("/Users/seail/Desktop/imagefile/facebook_man_resize.png"));
         lblNewLabel_2.setForeground(Color.WHITE);
-        lblNewLabel_2.setBounds(1104, 6, 260, 68);
+        lblNewLabel_2.setBounds(974, 10, 260, 68);
         lblNewLabel_2.addMouseListener(new MouseAdapter() {
 	        	@Override
 	        	public void mouseClicked(MouseEvent e) {
@@ -498,7 +690,7 @@ public class MyPage_TestBed extends JFrame {
         panel.add(lblNewLabel_2);
         
         JScrollPane scrollProfile = new JScrollPane(); // 프로필 
-        scrollProfile.setBounds(110, 100, 280, 400);
+        scrollProfile.setBounds(110, 100, 280, 360);
         scrollProfile.setBackground(Color.WHITE);
         
         frame.getContentPane().add(scrollProfile);
@@ -514,7 +706,7 @@ public class MyPage_TestBed extends JFrame {
 
         
         JTextArea txtAreaProfile = new JTextArea();
-        txtAreaProfile.setBounds(16, 64, 250, 300);
+        txtAreaProfile.setBounds(16, 64, 250, 250);
         profilePanel.add(txtAreaProfile);
 //        txtAreaProfile.setText("this is txtarea");
         
@@ -553,17 +745,35 @@ public class MyPage_TestBed extends JFrame {
         		btnProfileUpdateFocus.setEnabled(true);
         	}
         });
-        btnProfileUpdate.setBounds(153, 361, 117, 29);
+        btnProfileUpdate.setBounds(153, 320, 117, 30);
         profilePanel.add(btnProfileUpdate);
         selectMyProfile(userID, lblLabelProfile);
         
         JScrollPane friendScroll = new JScrollPane(); // 친구 리스트
-        friendScroll.setBounds(110, 550, 280, 430);
+        friendScroll.setBounds(110, 480, 280, 330);
         friendScroll.setBackground(Color.WHITE);
         
         frame.getContentPane().add(friendScroll);
         
         friendScroll.setViewportView(friendPanel);
+        
+        JLabel lblNewLabel_7 = new JLabel("Label7 입니다");
+        lblNewLabel_7.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent arg0) {
+        		if(!panel_1.isVisible()) {
+        			
+        			panel_1.setVisible(true);
+        		
+        		} else {
+        			panel_1.setVisible(false);
+        		}
+        	}
+        });
+        lblNewLabel_7.setIcon(new ImageIcon("D:\\Downloads\\icons8-menu-24.png"));
+        lblNewLabel_7.setBounds(1347, 14, 30, 48);
+        panel.add(lblNewLabel_7);
+        
         frame.setSize(1440, 1000);
 		frame.setUndecorated(true);
         frame.setVisible(true);
@@ -638,6 +848,26 @@ public class MyPage_TestBed extends JFrame {
 	    	   e.printStackTrace();
 	    	   return null;
 	       }
+	  }
+	  
+	  public int CheckPendingFriends(String userID) {
+		  try {
+		  String CountFriendsSQL = "select count(*) from pendingfriend where target_id = ?";
+		  PreparedStatement Countpstmt = con.prepareStatement(CountFriendsSQL);
+		  Countpstmt.setString(1, userID);
+		  ResultSet Countrs;
+		  int Counter = 0;
+		  
+		  Countrs = Countpstmt.executeQuery();
+		  	while(Countrs.next()) {
+		  		Counter = Countrs.getInt(1);
+		  	}
+		  return Counter;
+		  
+	  } catch (Exception e) {
+		  e.printStackTrace();
+		  return 0;
+	  	}
 	  }
 	  
 	  public void DBConnection() {
