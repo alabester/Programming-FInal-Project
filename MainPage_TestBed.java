@@ -458,7 +458,7 @@ public class MainPage_TestBed extends JFrame {
     							
     							pstmtInsert.executeUpdate();
     							
-    							dispose();
+    							frame.dispose();
     							new MainPage_TestBed(userID, userName);
     							
     							
@@ -535,6 +535,10 @@ public class MainPage_TestBed extends JFrame {
         
         
         JButton btnNewButton_1 = new JButton("");
+        btnNewButton_1.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        	}
+        });
         btnNewButton_1.addMouseListener(new MouseAdapter() {
         	@Override
         	public void mouseClicked(MouseEvent arg0) {
@@ -551,7 +555,7 @@ public class MainPage_TestBed extends JFrame {
         		if(Search().next()) {
 
         			while(SearchResult.next()) {
-
+        			String SrchName = SearchResult.getString(2);
 					JPanel SearchModeler = new JPanel();
 
 					SearchModeler.setBackground(Color.WHITE);
@@ -586,8 +590,40 @@ public class MainPage_TestBed extends JFrame {
 						gbc_lblNewButton_1.gridy = 0;
 						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);
 						
-					}	else { 
+					}	
+					else if(SrchName.toString().equals(userID.toString())) {
+						JButton lblNewButton_1 = new JButton("자기 자신입니다.");
+								lblNewButton_1.setEnabled(false);
+						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
+						gbc_lblNewButton_1.gridx = 2;
+						gbc_lblNewButton_1.gridy = 0;
+						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);						
+						
+					} else
+						
+					{ 
 						JButton lblNewButton_1 = new JButton("친구 추가");
+				        lblNewButton_1.addActionListener(new ActionListener() {
+				        	public void actionPerformed(ActionEvent arg0) {
+				        		
+				        		try {
+				        		String SQL = "insert into pendingfriend values (?, ?)";
+				        		PreparedStatement pstmtInsert2 = con.prepareStatement(SQL);
+				        		
+				        		pstmtInsert2.setString(1, userID);
+				        		System.out.println(userID);
+				        		pstmtInsert2.setString(2, SrchName);
+				        		System.out.println(SrchName);
+				        		pstmtInsert2.executeUpdate();
+				        		
+				        		lblNewButton_1.setText("신청했습니다.");
+				        		lblNewButton_1.setEnabled(false);
+				        		} catch (SQLException e) {
+				        		lblNewButton_1.setText("이미 신청했습니다.");
+				        		lblNewButton_1.setEnabled(false);
+				        		}
+				        	}
+				        });
 						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
 						gbc_lblNewButton_1.gridx = 2;
 						gbc_lblNewButton_1.gridy = 0;
@@ -647,8 +683,15 @@ public class MainPage_TestBed extends JFrame {
         Write.add(btnNewButton_2);
                 
         JLabel lblNewLabel_2 = new JLabel(userName + "("+userID+")");
+        lblNewLabel_2.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		dispose();
+        		new MyPage_TestBed(userID, userName);
+        	}
+        });
         lblNewLabel_2.setForeground(Color.WHITE);
-        lblNewLabel_2.setBounds(1050, 24, 300, 34);
+        lblNewLabel_2.setBounds(974, 24, 281, 34);
         panel.add(lblNewLabel_2);
         
         JLabel lblNewLabel_4 = new JLabel("");

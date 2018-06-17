@@ -308,8 +308,10 @@ public class Login extends JFrame implements FocusListener {
 		  
 		  pstmtsqlInsert.executeUpdate();
 			
-		  } catch (Exception e) {
-			  e.printStackTrace();
+		  } catch (SQLException e) {
+				lblNewLabel_3.setForeground(Color.RED);
+				lblNewLabel_2.setIcon(new ImageIcon("D:\\Downloads\\icons8-high-priority-48 (1).png"));
+				lblNewLabel_3.setText("이미 있는 아이디입니다.");
 		  }
 
 	  }
