@@ -5,8 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import javax.swing.UIManager;
 import java.awt.Color;
@@ -36,12 +34,12 @@ import javax.swing.JRadioButton;
 import java.sql.*;
 
 public class Login extends JFrame implements FocusListener {
+
     public Connection con = null;
     public Statement st = null;
     public ResultSet rs = null;
     
     private PreparedStatement pstmtsqlInsert;
-    private PreparedStatement pstmtsqlSelect;
     
 	private JPanel contentPane;
 	private JTextField id_1;
@@ -58,9 +56,8 @@ public class Login extends JFrame implements FocusListener {
 	private JTextField txtDd;
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_2;
-	
-	public static String loginedName; // 로그인 되어 있는 사람이름 static 변수로 선언
-	
+	private JLabel label_4;
+	private JLabel lblNewLabel_4;
 	/**
 	 * Launch the application.
 	 */
@@ -69,10 +66,8 @@ public class Login extends JFrame implements FocusListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
 					Login frame = new Login();
-					frame.setVisible(true);
-
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -87,12 +82,14 @@ public class Login extends JFrame implements FocusListener {
 	public Login() {
 		
 		DBConnection();
-		
+
 		lblNewLabel_2 = null;
 		lblNewLabel_3 = null;
 
-		setUndecorated(true); // java 프레임 타이틀바 없앰
+		setUndecorated(true);
+		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setBounds(200, 200, 900, 800);
 		setBounds(200, 20, 900, 800);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
@@ -134,18 +131,16 @@ public class Login extends JFrame implements FocusListener {
 		panel.add(lblNewLabel);
 		
 		JButton button = new JButton("로그인");
-		button.addActionListener(new ActionListener() { // 로그인 버튼 클릭할 경우
-			public void actionPerformed(ActionEvent e) {
-				String id = id_1.getText();
-				String pwd = pwd_1.getText();
-				isLoginCheck(id, pwd);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				LoginValidate();
 			}
 		});
-		button.setBounds(790, 41, 71, 25);
+		button.setBounds(797, 40, 59, 25);
 		panel.add(button);
 		button.setMargin(new Insets(0, 0, 0, 0));
 		button.setPreferredSize(new Dimension(59, 25));
-		button.setForeground(Color.BLACK);
+		button.setForeground(Color.WHITE);
 		button.setFont(new Font("다음_Regular", Font.PLAIN, 15));
 		button.setBackground(new Color(72, 103, 170));
 		
@@ -206,7 +201,7 @@ public class Login extends JFrame implements FocusListener {
 		contentPane.add(label_2);
 		
 		JButton btnNewButton = new JButton("가입하기");
-		btnNewButton.setForeground(Color.BLACK);
+		btnNewButton.setForeground(Color.WHITE);
 		btnNewButton.setBackground(new Color(72,103,170));
 		btnNewButton.setFont(new Font("다음_Regular", Font.PLAIN, 15));
 		btnNewButton.addActionListener(new ActionListener() {
@@ -216,9 +211,9 @@ public class Login extends JFrame implements FocusListener {
 					lblNewLabel_3.setForeground(Color.BLUE);
 					lblNewLabel_3.setText("성공적으로 입력되었습니다.");
 					InsertQuery();
+					makeProfileQuery(); // 프로필 테이블 데이터 추가하는 SQL
 				}
 				else {
-				System.out.println(textField.getText());
 				lblNewLabel_3.setForeground(Color.RED);
 				lblNewLabel_2.setIcon(new ImageIcon("D:\\Downloads\\icons8-high-priority-48 (1).png"));
 				lblNewLabel_3.setText("필수항목이 제대로 입력되지 않았습니다.");
@@ -272,6 +267,16 @@ public class Login extends JFrame implements FocusListener {
 		lblNewLabel_3.setBounds(488, 617, 292, 40);
 		contentPane.add(lblNewLabel_3);
 		
+
+		lblNewLabel_4 = new JLabel("");
+		lblNewLabel_4.setSize(400, 30);
+		lblNewLabel_4.setLocation(490, 105);
+		contentPane.add(lblNewLabel_4);
+
+		label_4 = new JLabel("");
+		label_4.setBounds(450, 105, 50, 30);
+		contentPane.add(label_4);
+		
 		
         int panelHeight = contentPane.getHeight();
         int panelWidth = contentPane.getWidth();
@@ -304,50 +309,11 @@ public class Login extends JFrame implements FocusListener {
 		  pstmtsqlInsert.setDate(5, birthdate);
 		  
 		  pstmtsqlInsert.executeUpdate();
-		  System.out.println(pstmtsqlInsert);
 			
 		  } catch (Exception e) {
 			  e.printStackTrace();
 		  }
-	  }
-	  
-	  public void isLoginCheck(String paramId, String paramPwd) { // 로그인 체크
-		  String SQL = "SELECT * FROM member WHERE id = ?";
-		  
-		  try {
-			  	pstmtsqlSelect = con.prepareStatement(SQL);
-				pstmtsqlSelect.setString(1, paramId);
-				rs = pstmtsqlSelect.executeQuery();
 
-				if (rs.next()) { // 아이디 존재할 경우
-					String pwd = rs.getString("pwd");
-					if (paramPwd.equals(pwd)){ // 비밀번호가 맞을 경우
-						String name = rs.getString("surname") + rs.getString("name"); 
-						loginedName = name; // desktop app 에서는 session 처리가 없기 떄문에 static 변수에 로그인한 사람이름 저장
-						JOptionPane.showMessageDialog(null, "로그인 성공했습니다.");
-						new MainPage_TestBed();
-						dispose();
-					} else { // 비밀번호가 틀릴 경우
-						JOptionPane.showMessageDialog(null, "비밀번호가 틀립니다.");
-						pwd_1.setText("");
-					}
-				} else { // 아이디 존재하지 않을 경우
-					JOptionPane.showMessageDialog(null, "아이디가 존재하지 않습니다.");
-					id_1.setText("");
-					pwd_1.setText("");
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
-			} 
-//		  finally { 
-//				try {
-//					if(rs!=null) rs.close();
-//					if(pstmtsqlSelect!=null) pstmtsqlSelect.close();
-//					if(con!=null) con.close();
-//				} catch (SQLException e) {
-//					
-//				}
-//			}
 	  }
 	  
 	  public void focusLost(FocusEvent e) {
@@ -370,4 +336,52 @@ public class Login extends JFrame implements FocusListener {
 	  public String getText(String JTextFieldHName) {
 		    return showingHint ? "" : JTextFieldHName;
 		  }
+
+	  public void LoginValidate() {
+		  try {
+		  String SQL = "select concat(surname, name), id, pwd from member where id = ?";
+				  PreparedStatement pstmtLogin = con.prepareStatement(SQL);
+				  pstmtLogin.setString(1, id_1.getText());
+				  
+		ResultSet rst = pstmtLogin.executeQuery();
+			String userID = null;
+			String pwd = null;
+			String userName = null;
+			
+			while(rst.next()) {
+				userName = rst.getString(1);
+				userID = rst.getString(2);
+				pwd = rst.getString(3);
+
+				if(pwd.equals(pwd_1.getText())) {
+					dispose();
+					new MainPage_TestBed(userID, userName);
+					
+				} else {
+					System.out.println("비밀번호 불일치");
+					
+
+				}
+				break;
+
+			}
+			label_4.setIcon(new ImageIcon("D:\\Downloads\\icons8-high-priority-48 (1).png"));
+			lblNewLabel_4.setForeground(Color.RED);
+			lblNewLabel_4.setText("아이디가 존재하지 않거나, 비밀번호가 일치하지 않습니다.");
+			
+		} catch (Exception e) {
+		  	e.printStackTrace();
+		}
+	 }
+	  
+	 public void makeProfileQuery() { // 프로필 테이블 데이터 추가
+		 try {
+			 String SQL = "INSERT INTO profile(userID) VALUES(?)";
+			 PreparedStatement pstmt = con.prepareStatement(SQL);
+			 pstmt.setString(1, textField_2.getText());
+			 pstmt.executeUpdate();
+		 } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+	 }
 }

@@ -37,6 +37,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 public class MyPage_TestBed extends JFrame {
 
@@ -49,6 +51,8 @@ public class MyPage_TestBed extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
+	private int FullrowCnt = 0;
+	private int rowCnt = 0;
 
 	/**
 	 * Launch the application.
@@ -79,11 +83,15 @@ public class MyPage_TestBed extends JFrame {
         mainPanel.setLayout(layout);
 
         DBConnection();
-        
-		int rowCnt = 0;
 		
 		try {
-
+			String ContentCount = "select count(*) from myinfo";
+			st = con.prepareStatement(ContentCount);
+			rs = st.executeQuery();
+				while(rs.next()) {
+					FullrowCnt = rs.getInt(1);
+				};
+			
 			String myContentCount = "select count(*) from myinfo where myUserID = ?"; //
 			st = con.prepareStatement(myContentCount);
 			st.setString(1, userID);
@@ -118,7 +126,7 @@ public class MyPage_TestBed extends JFrame {
         	layout.putConstraint(SpringLayout.NORTH, Write, 0, SpringLayout.NORTH, mainPanel);
         	layout.putConstraint(SpringLayout.WEST, Write, 0, SpringLayout.WEST, mainPanel);
         	
-        	Write.setPreferredSize(new Dimension(1000,290));
+        	Write.setPreferredSize(new Dimension(1000, 290));
         	Write.setBackground(Color.WHITE);
         	mainPanel.add(Write);
         	Write.setLayout(null);
@@ -129,19 +137,13 @@ public class MyPage_TestBed extends JFrame {
         	Write.add(Tester);
         	
         	textField = new JTextField();
-        	textField.setBounds(50, 50, 928, 190);
+        	textField.setBounds(50, 50, 928, 140);
         	Write.add(textField);
         	textField.setColumns(10);
         	
         	JLabel lblNewLabel_1 = new JLabel("%d\uB2D8, \uBB34\uC2A8 \uC0DD\uAC01\uC744 \uD558\uC2DC\uACE0 \uACC4\uC2E0\uAC00\uC694?");
         	lblNewLabel_1.setBounds(50, 0, 590, 50);
         	Write.add(lblNewLabel_1);
-        	
-        	JButton btnNewButton = new JButton("\uAC8C\uC2DC");
-        	btnNewButton.setForeground(Color.BLACK);
-        	btnNewButton.setBackground(new Color(66, 103, 178));
-        	btnNewButton.setBounds(50, 250, 928, 30);
-        	Write.add(btnNewButton);
         	
         for(int i =0;i<rowCnt;i++){
         	
@@ -197,7 +199,7 @@ public class MyPage_TestBed extends JFrame {
 		    		int l = 0; // while문 Count 갯수, Initalize
 		    		
 		    		String StartText = "", RemainText = ""; // 50자로 나눈 문자열의 내용, 나머지 문자열의 내용
-		    		String PerfectText = "";
+		    		String PerfectText = ""; // 
 		    		
 		    		if(GetText.length() >= 70) {
 		       		StartText = GetText.substring(0,70);
@@ -241,7 +243,7 @@ public class MyPage_TestBed extends JFrame {
 //		        initialX+=100;
 //		        initialHeight+=100;
 		        mainPanel.add(Modeler);
-		    	Modeler.setPreferredSize(new Dimension(1000, 150+k*10));
+		    		Modeler.setPreferredSize(new Dimension(1000, 150+k*10));
         }
         frame.getContentPane().setLayout(null); // 컴포넌트의 크기와 위치를 일일이 다 지정해주어야 된다.
         mainPanel.setPreferredSize(new Dimension(mainPanel.getWidth(), j)); // 이 메소드는 Dimension객체를 인자로 받으면서 해당 콤포넌트의 '기본크기'를 결정
@@ -276,28 +278,44 @@ public class MyPage_TestBed extends JFrame {
         panel.add(textField_1);
         textField_1.setColumns(10);
         
-
-        
-        JButton btnNewButton_1 = new JButton("");
+        JButton btnNewButton_1 = new JButton(""); // 검색버튼
         btnNewButton_1.setIcon(new ImageIcon("D:\\Downloads\\icons8-search-25.png"));
         btnNewButton_1.setBackground(new Color(246, 247, 249));
-        btnNewButton.setContentAreaFilled(false);
         btnNewButton_1.setBounds(784, 24, 105, 34);
         panel.add(btnNewButton_1);
         
-//        JButton btnNewButton_2 = new JButton("\uAC8C\uC2DC\uD558\uAE30");
-//        btnNewButton_2.setBackground(new Color(72,103,170));
-//        btnNewButton_2.setForeground(Color.WHITE);
-//        btnNewButton_2.addActionListener(new ActionListener() {
-//        	public void actionPerformed(ActionEvent arg0) {
-//        		InsertContent(userID, textField.getText());
-//                lblNewLabel_3.setIcon(new ImageIcon("D:\\Downloads\\icons8-checked-40.png"));
-//        		label.setForeground(Color.BLUE);
-//        		label.setText("성공적으로 입력되었습니다.");
-//        	}
-//        });
-//        
-//        btnNewButton_2.setBounds(50, 250, 580, 27);
+        JLabel lblNewLabel_3 = new JLabel("");
+        lblNewLabel_3.setBounds(50, 200, 50, 40);
+        Write.add(lblNewLabel_3);
+        
+        JLabel label = new JLabel("");
+        label.setBounds(100, 200, 400, 40);
+        Write.add(label);
+        btnNewButton_1.setBounds(784, 24, 105, 34);
+        panel.add(btnNewButton_1);
+        
+//      JButton btnNewButton_2 = new JButton("\uAC8C\uC2DC");
+//	    	btnNewButton_2.setForeground(Color.BLACK);
+//	    	btnNewButton_2.setBackground(new Color(66, 103, 178));
+//	    	btnNewButton_2.setBounds(50, 250, 928, 30);
+//	    	btnNewButton_2.setContentAreaFilled(false);
+//	    	Write.add(btnNewButton_2);
+	    	
+        JButton btnNewButton_2 = new JButton("\uAC8C\uC2DC\uD558\uAE30"); //글 게시 버튼
+        btnNewButton_2.setForeground(Color.BLACK);
+	    	btnNewButton_2.setBackground(new Color(66, 103, 178));
+	    	btnNewButton_2.setBounds(50, 250, 928, 27);
+	    	btnNewButton_2.setContentAreaFilled(false);
+        btnNewButton_2.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		InsertmyContent(userID, textField.getText());
+        		lblNewLabel_3.setIcon(new ImageIcon("D:\\Downloads\\icons8-checked-40.png"));
+        		label.setForeground(Color.BLUE);
+        		label.setText("성공적으로 입력되었습니다.");
+        	}
+        });
+        Write.add(btnNewButton_2);
+        
         JLabel lblNewLabel_2 = new JLabel("\t\t" + userName + "("+userID+")");
         lblNewLabel_2.setIcon(new ImageIcon("/Users/seail/Desktop/imagefile/facebook_man_resize.png"));
         lblNewLabel_2.setForeground(Color.WHITE);
@@ -319,11 +337,63 @@ public class MyPage_TestBed extends JFrame {
         });
         panel.add(lblNewLabel_2);
         
-        JScrollPane scrollPane = new JScrollPane(); // 프로필 
-        scrollPane.setBounds(110, 100, 280, 900);
-        scrollPane.setBackground(Color.WHITE);
+        JScrollPane scrollProfile = new JScrollPane(); // 프로필 
+        scrollProfile.setBounds(110, 100, 280, 400);
+        scrollProfile.setBackground(Color.WHITE);
         
-        frame.getContentPane().add(scrollPane);
+        frame.getContentPane().add(scrollProfile);
+        
+        JPanel profilePanel = new JPanel();
+        profilePanel.setLayout(null);
+        scrollProfile.setViewportView(profilePanel);
+        
+        JLabel lblNewLabel_4 = new JLabel("자신을 소개해보세요.");
+        lblNewLabel_4.setLocation(16, 6);
+        lblNewLabel_4.setSize(127, 60);
+        profilePanel.add(lblNewLabel_4);
+
+        
+        JTextArea txtAreaProfile = new JTextArea();
+        txtAreaProfile.setBounds(16, 64, 250, 300);
+        profilePanel.add(txtAreaProfile);
+        txtAreaProfile.setText("this is txtarea");
+        
+        JLabel lblLabelProfile = new JLabel("this is label");
+        lblLabelProfile.setBounds(16, 64, 250, 300);
+        profilePanel.add(lblLabelProfile);
+        lblLabelProfile.setVerticalAlignment(SwingConstants.TOP);
+        txtAreaProfile.setVisible(false);
+        
+        JButton btnProfileUpdate = new JButton("확인");
+        
+        JButton btnProfileUpdateFocus = new JButton("추가");
+        btnProfileUpdateFocus.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) { // 추가 버튼 클릭, 프로필 내용 업데이트 하는 화면으로 전환
+        		txtAreaProfile.setVisible(true);
+        		btnProfileUpdateFocus.setEnabled(false);
+        		btnProfileUpdate.setVisible(true);
+        	}
+        });
+        btnProfileUpdateFocus.setBounds(127, 23, 117, 29);
+        profilePanel.add(btnProfileUpdateFocus);
+        
+        btnProfileUpdate.setVisible(false);
+        btnProfileUpdate.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) { // 확인 버튼 클릭, 프로필 내용 업데이트
+        		String updateText = txtAreaProfile.getText();
+        		lblLabelProfile.setText("<html>" + updateText.replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>"); // 작성한 내용들 lblLabelProfile에 추가
+        		txtAreaProfile.setVisible(false);
+        		lblLabelProfile.setVisible(true);
+        		btnProfileUpdate.setVisible(false);
+        		btnProfileUpdateFocus.setEnabled(true);
+        	}
+        });
+        btnProfileUpdate.setBounds(153, 361, 117, 29);
+        profilePanel.add(btnProfileUpdate);
+        
+        JScrollPane friendScroll = new JScrollPane(); // 친구 리스트
+        friendScroll.setBounds(110, 550, 280, 430);
+        frame.getContentPane().add(friendScroll);
         frame.setSize(1440, 1000);
 		frame.setUndecorated(true);
         frame.setVisible(true);
@@ -338,6 +408,22 @@ public class MyPage_TestBed extends JFrame {
 //        frame.setVisible(true);
 
 	    }
+	
+		public void InsertmyContent(String userID, String myContent) {
+		  try {
+		  	String InsertSQL = "insert into myinfo(myContentID, myUserID, myContent) values (?, ?, ?)";
+		  	PreparedStatement Insertpstmt = con.prepareStatement(InsertSQL);
+		  	Insertpstmt.setInt(1, FullrowCnt+1);
+		  	Insertpstmt.setString(2, userID);
+		  	Insertpstmt.setString(3, myContent);
+		  	Insertpstmt.executeUpdate();
+		  	
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+	  }
+		
+		//public void updatemyProfile()
 	
 	  public void DBConnection() {
 		  try {
