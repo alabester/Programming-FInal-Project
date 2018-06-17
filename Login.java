@@ -89,7 +89,8 @@ public class Login extends JFrame implements FocusListener {
 		setUndecorated(true);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(200, 200, 900, 800);
+//		setBounds(200, 200, 900, 800);
+		setBounds(200, 20, 900, 800);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -210,6 +211,7 @@ public class Login extends JFrame implements FocusListener {
 					lblNewLabel_3.setForeground(Color.BLUE);
 					lblNewLabel_3.setText("성공적으로 입력되었습니다.");
 					InsertQuery();
+					makeProfileQuery();
 				}
 				else {
 				lblNewLabel_3.setForeground(Color.RED);

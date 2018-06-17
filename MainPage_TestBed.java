@@ -140,7 +140,7 @@ public class MainPage_TestBed extends JFrame {
 				}
 			
 				
-			String Count = "select count(*) from content where userid in (select friendID from friendlist where userid = ?) "; //친구들 글 갯수 가져오기
+			String Count = "select count(*) from content where userid in (select friendID from friendlist where userid = ?) ";
 			
 			st = con.prepareStatement(Count);
 			st.setString(1, userID);
@@ -149,7 +149,7 @@ public class MainPage_TestBed extends JFrame {
 					rowCnt = rs.getInt(1);
 				}
 
-			String SQL = "select content, userid from content where userid in (select friendID from friendlist where userid = ?)"; //친구들 글, 아이디 가져오기
+			String SQL = "select content, userid from content where userid in (select friendID from friendlist where userid = ?)";
 			
 			st = con.prepareStatement(SQL);
 			st.setString(1, userID);
@@ -239,101 +239,101 @@ public class MainPage_TestBed extends JFrame {
 		}
 			
         for(int i =0;i<rowCnt;i++){
-		        	JPanel Modeler = new JPanel();
-		//        	try {
-		//       		
-		//        	} catch (Exception e) {
-		//        		e.printStackTrace();
-		//        	}
-		
-		        	GridBagLayout Modeler_Layout = new GridBagLayout();
-		        	Modeler.setBackground(Color.WHITE);
-		        	Modeler.setOpaque(true);
-		        	Modeler.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0,0,10,0,new Color(233, 235, 238)),new EtchedBorder()));
-		    		Modeler_Layout.columnWidths = new int[]{0, 0, 0};
-		    		Modeler_Layout.rowHeights = new int[]{50, 50, 0};
-		    		Modeler_Layout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		    		Modeler_Layout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		    		Modeler.setLayout(Modeler_Layout);
-		    		
-		//        	JLabel label = new JLabel("Enter Name " + i );
-		    		JLabel label = new JLabel("");
-		    		label.setIcon(new ImageIcon("D:\\Downloads\\icons8-user-avatar-filled-50.png"));
-		    		GridBagConstraints gbc_label = new GridBagConstraints();
-		    		gbc_label.insets = new Insets(0, 0, 5, 5);
-		    		gbc_label.gridx = 0;
-		    		gbc_label.gridy = 0;
-		    		Modeler.add(label, gbc_label);
-		    		 
-		       		JLabel text = new JLabel(names.get(i));
-		       		
-		       		
-		       		
-		    		text.setHorizontalAlignment(JLabel.LEFT);
-		       		GridBagConstraints gbc_label_2 = new GridBagConstraints();
-		    		gbc_label_2.anchor = GridBagConstraints.WEST;
-		    		gbc_label_2.gridx = 1;
-		    		gbc_label_2.gridy = 0;
-		    		Modeler.add(text, gbc_label_2);
-		    		
-		    		JLabel text2 = new JLabel("");
-		    		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-		    		gbc_lblNewLabel_1.insets = new Insets(0, 0, 0, 5);
-		    		gbc_lblNewLabel_1.gridx = 0;
-		    		gbc_lblNewLabel_1.gridy = 1;
-		    		Modeler.add(text2, gbc_lblNewLabel_1);
-		
-		    		String GetText = contents.get(i);
-		    		String[] GetTextArray;
-		
-		    		int k = 0; // 50자로 자른 줄의 갯수, Initialize
-		    		int l = 0; // while문 Count 갯수, Initalize
-		    		
-		    		String StartText = "", RemainText = ""; // 70자로 나눈 문자열의 내용, 나머지 문자열의 내용
-		    		String PerfectText = "";
-		    		
-		    		if(GetText.length() >= 70) {
-		       		StartText = GetText.substring(0,70);
-		       		RemainText = GetText.substring(70, GetText.length());
-		    		} else {
-		    			RemainText = contents.get(i);
-		    		}
-		    		
-		       		PerfectText = StartText + "<br />";
-		       		
-		       		while(RemainText.length() >= 70) {
-		       			PerfectText += StartText + "<br />";
-		       			StartText = RemainText.substring(0, 70);
-		       			RemainText = RemainText.substring(70, RemainText.length());
-		       			k++;
-		       		}
-		       		
-		       		PerfectText += RemainText;
-		       		PerfectText = "<html>" + PerfectText + "</html>";
-		
-		    		JLabel text3 = new JLabel(PerfectText);
-		            
-		            
-		            GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
-		    		gbc_lblNewLabel_3.anchor = GridBagConstraints.NORTHWEST;
-		    		gbc_lblNewLabel_3.gridx = 1;
-		    		gbc_lblNewLabel_3.gridy = 1;
-		    		Modeler.add(text3, gbc_lblNewLabel_3);
-		
-		      
-		//        layout.putConstraint(SpringLayout.WEST, Modeler, 10, SpringLayout.WEST,
-		//                        contentPane);
-		      layout.putConstraint(SpringLayout.NORTH, Modeler, j, SpringLayout.NORTH,
-		                       contentPane);
-		//        layout.putConstraint(SpringLayout.NORTH, Modeler, j, SpringLayout.NORTH,
-		//                        contentPane);
-		//        layout.putConstraint(SpringLayout.WEST, Modeler, 20, SpringLayout.EAST,
-		//                        label);
-		        j+=150+k*10;
-		        initialX+=100;
-		        initialHeight+=100;
-		        mainPanel.add(Modeler);
-		    	Modeler.setPreferredSize(new Dimension(640, 150+k*10));
+        	JPanel Modeler = new JPanel();
+//        	try {
+//       		
+//        	} catch (Exception e) {
+//        		e.printStackTrace();
+//        	}
+
+        	GridBagLayout Modeler_Layout = new GridBagLayout();
+        	Modeler.setBackground(Color.WHITE);
+        	Modeler.setOpaque(true);
+        	Modeler.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0,0,10,0,new Color(233, 235, 238)),new EtchedBorder()));
+    		Modeler_Layout.columnWidths = new int[]{0, 0, 0};
+    		Modeler_Layout.rowHeights = new int[]{50, 50, 0};
+    		Modeler_Layout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+    		Modeler_Layout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+    		Modeler.setLayout(Modeler_Layout);
+    		
+//        	JLabel label = new JLabel("Enter Name " + i );
+    		JLabel label = new JLabel("");
+    		label.setIcon(new ImageIcon("D:\\Downloads\\icons8-user-avatar-filled-50.png"));
+    		GridBagConstraints gbc_label = new GridBagConstraints();
+    		gbc_label.insets = new Insets(0, 0, 5, 5);
+    		gbc_label.gridx = 0;
+    		gbc_label.gridy = 0;
+    		Modeler.add(label, gbc_label);
+    		 
+       		JLabel text = new JLabel(names.get(i));
+       		
+       		
+       		
+    		text.setHorizontalAlignment(JLabel.LEFT);
+       		GridBagConstraints gbc_label_2 = new GridBagConstraints();
+    		gbc_label_2.anchor = GridBagConstraints.WEST;
+    		gbc_label_2.gridx = 1;
+    		gbc_label_2.gridy = 0;
+    		Modeler.add(text, gbc_label_2);
+    		
+    		JLabel text2 = new JLabel("");
+    		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+    		gbc_lblNewLabel_1.insets = new Insets(0, 0, 0, 5);
+    		gbc_lblNewLabel_1.gridx = 0;
+    		gbc_lblNewLabel_1.gridy = 1;
+    		Modeler.add(text2, gbc_lblNewLabel_1);
+
+    		String GetText = contents.get(i);
+    		String[] GetTextArray;
+
+    		int k = 0; // 50자로 자른 줄의 갯수, Initialize
+    		int l = 0; // while문 Count 갯수, Initalize
+    		
+    		String StartText = "", RemainText = ""; // 70자로 나눈 문자열의 내용, 나머지 문자열의 내용
+    		String PerfectText = "";
+    		
+    		if(GetText.length() >= 70) {
+       		StartText = GetText.substring(0,70);
+       		RemainText = GetText.substring(70, GetText.length());
+    		} else {
+    			RemainText = contents.get(i);
+    		}
+    		
+       		PerfectText = StartText + "<br />";
+       		
+       		while(RemainText.length() >= 70) {
+       			PerfectText += StartText + "<br />";
+       			StartText = RemainText.substring(0, 70);
+       			RemainText = RemainText.substring(70, RemainText.length());
+       			k++;
+       		}
+       		
+       		PerfectText += RemainText;
+       		PerfectText = "<html>" + PerfectText + "</html>";
+
+    		JLabel text3 = new JLabel(PerfectText);
+            
+            
+            GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
+    		gbc_lblNewLabel_3.anchor = GridBagConstraints.NORTHWEST;
+    		gbc_lblNewLabel_3.gridx = 1;
+    		gbc_lblNewLabel_3.gridy = 1;
+    		Modeler.add(text3, gbc_lblNewLabel_3);
+
+      
+//        layout.putConstraint(SpringLayout.WEST, Modeler, 10, SpringLayout.WEST,
+//                        contentPane);
+      layout.putConstraint(SpringLayout.NORTH, Modeler, j, SpringLayout.NORTH,
+                       contentPane);
+//        layout.putConstraint(SpringLayout.NORTH, Modeler, j, SpringLayout.NORTH,
+//                        contentPane);
+//        layout.putConstraint(SpringLayout.WEST, Modeler, 20, SpringLayout.EAST,
+//                        label);
+        j+=150+k*10;
+        initialX+=100;
+        initialHeight+=100;
+        mainPanel.add(Modeler);
+    	Modeler.setPreferredSize(new Dimension(640, 150+k*10));
         }
         frame.getContentPane().setLayout(null);
         mainPanel.setPreferredSize(new Dimension(mainPanel.getWidth(), j));
@@ -458,7 +458,7 @@ public class MainPage_TestBed extends JFrame {
     							
     							pstmtInsert.executeUpdate();
     							
-    							dispose();
+    							frame.dispose();
     							new MainPage_TestBed(userID, userName);
     							
     							
@@ -535,7 +535,11 @@ public class MainPage_TestBed extends JFrame {
         
         
         JButton btnNewButton_1 = new JButton("");
-        btnNewButton_1.addMouseListener(new MouseAdapter() { // 검색기능
+        btnNewButton_1.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        	}
+        });
+        btnNewButton_1.addMouseListener(new MouseAdapter() {
         	@Override
         	public void mouseClicked(MouseEvent arg0) {
 				if(searchPanel.isShowing()) {
@@ -551,7 +555,7 @@ public class MainPage_TestBed extends JFrame {
         		if(Search().next()) {
 
         			while(SearchResult.next()) {
-
+        			String SrchName = SearchResult.getString(2);
 					JPanel SearchModeler = new JPanel();
 
 					SearchModeler.setBackground(Color.WHITE);
@@ -586,8 +590,40 @@ public class MainPage_TestBed extends JFrame {
 						gbc_lblNewButton_1.gridy = 0;
 						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);
 						
-					}	else { 
+					}	
+					else if(SrchName.toString().equals(userID.toString())) {
+						JButton lblNewButton_1 = new JButton("자기 자신입니다.");
+								lblNewButton_1.setEnabled(false);
+						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
+						gbc_lblNewButton_1.gridx = 2;
+						gbc_lblNewButton_1.gridy = 0;
+						SearchModeler.add(lblNewButton_1, gbc_lblNewButton_1);						
+						
+					} else
+						
+					{ 
 						JButton lblNewButton_1 = new JButton("친구 추가");
+				        lblNewButton_1.addActionListener(new ActionListener() {
+				        	public void actionPerformed(ActionEvent arg0) {
+				        		
+				        		try {
+				        		String SQL = "insert into pendingfriend values (?, ?)";
+				        		PreparedStatement pstmtInsert2 = con.prepareStatement(SQL);
+				        		
+				        		pstmtInsert2.setString(1, userID);
+				        		System.out.println(userID);
+				        		pstmtInsert2.setString(2, SrchName);
+				        		System.out.println(SrchName);
+				        		pstmtInsert2.executeUpdate();
+				        		
+				        		lblNewButton_1.setText("신청했습니다.");
+				        		lblNewButton_1.setEnabled(false);
+				        		} catch (SQLException e) {
+				        		lblNewButton_1.setText("이미 신청했습니다.");
+				        		lblNewButton_1.setEnabled(false);
+				        		}
+				        	}
+				        });
 						GridBagConstraints gbc_lblNewButton_1 = new GridBagConstraints();
 						gbc_lblNewButton_1.gridx = 2;
 						gbc_lblNewButton_1.gridy = 0;
@@ -647,26 +683,18 @@ public class MainPage_TestBed extends JFrame {
         Write.add(btnNewButton_2);
                 
         JLabel lblNewLabel_2 = new JLabel(userName + "("+userID+")");
-        lblNewLabel_2.setForeground(Color.WHITE);
-        lblNewLabel_2.setBounds(1050, 24, 300, 34);
         lblNewLabel_2.addMouseListener(new MouseAdapter() {
-	        	@Override
-	        	public void mouseClicked(MouseEvent e) {
-	        			dispose();
-					new MyPage_TestBed(userID, userName);
-	        		}
-	        	@Override
-	        	public void mouseEntered(MouseEvent e) {
-	        			lblNewLabel_2.setForeground(Color.BLACK);
-	        	}
-	        	@Override
-	        	public void mouseExited(MouseEvent e) {
-	        			lblNewLabel_2.setForeground(Color.WHITE);
-	        	}
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		dispose();
+        		new MyPage_TestBed(userID, userName);
+        	}
         });
+        lblNewLabel_2.setForeground(Color.WHITE);
+        lblNewLabel_2.setBounds(974, 24, 281, 34);
         panel.add(lblNewLabel_2);
         
-        JLabel lblNewLabel_4 = new JLabel("");
+        JLabel lblNewLabel_4 = new JLabel("Label4 입니다");
         lblNewLabel_4.addMouseListener(new MouseAdapter() {
         	@Override
         	public void mouseClicked(MouseEvent arg0) {
@@ -696,7 +724,7 @@ public class MainPage_TestBed extends JFrame {
         frame.setSize(1440, 1000);
 		frame.setUndecorated(true);
         frame.setVisible(true);
-	}
+	    }
 	
 	  public void DBConnection() {
 		  try {
@@ -706,7 +734,7 @@ public class MainPage_TestBed extends JFrame {
 			  e.printStackTrace();
 		  }
 	  	  }
-	  public ResultSet Search() { // 검색
+	  public ResultSet Search() {
 		  try {
 			  String SearchSQL = "select concat(surname, name), id from member where concat(surname, name) like ?";
 			  PreparedStatement searchpstmt = con.prepareStatement(SearchSQL);
@@ -757,4 +785,4 @@ public class MainPage_TestBed extends JFrame {
 		  return 0;
 	  }
 	  }
-}
+	}
