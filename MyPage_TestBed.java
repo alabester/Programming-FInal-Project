@@ -46,13 +46,16 @@ public class MyPage_TestBed extends JFrame {
     public PreparedStatement st = null;
     public ResultSet rs = null;
 	ArrayList<String> myContents = new ArrayList<>();
+	ArrayList<String> friends = new ArrayList<>();
 //	ArrayList<String> myName = new ArrayList<>();
 	
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
+	
 	private int FullrowCnt = 0;
 	private int rowCnt = 0;
+	private int friendCnt = 0;
 
 	/**
 	 * Launch the application.
@@ -78,9 +81,15 @@ public class MyPage_TestBed extends JFrame {
         JScrollPane scroll = new JScrollPane();
         scroll.setBounds(400, 100, 1000, 900);
         Container contentPane = frame.getContentPane();
+        
         SpringLayout layout = new SpringLayout();
+        SpringLayout Friendlayout = new SpringLayout();
+        
         JPanel mainPanel = new JPanel();
+        JPanel friendPanel = new JPanel();
+        
         mainPanel.setLayout(layout);
+        friendPanel.setLayout(Friendlayout);
 
         DBConnection();
 		
@@ -92,7 +101,7 @@ public class MyPage_TestBed extends JFrame {
 					FullrowCnt = rs.getInt(1);
 				};
 			
-			String myContentCount = "select count(*) from myinfo where myUserID = ?"; //
+			String myContentCount = "select count(*) from myinfo where myUserID = ?"; 
 			st = con.prepareStatement(myContentCount);
 			st.setString(1, userID);
 			rs = st.executeQuery();
@@ -112,6 +121,22 @@ public class MyPage_TestBed extends JFrame {
 				myContents.add(rs.getString("myContent"));
 			}
 			
+			String FriendCount = "select count(*) from friendlist where userid = ?"; // 친구 수 가져오기
+			st = con.prepareStatement(FriendCount);
+			st.setString(1, userID);
+			rs = st.executeQuery();
+				while(rs.next()) {
+					friendCnt = rs.getInt(1);
+				}
+				
+			String FriendList = "select friendID from friendlist where userid = ?"; // 친구 아이디 가져오기
+			st = con.prepareStatement(FriendList);
+			st.setString(1, userID);
+			rs = st.executeQuery();
+				while(rs.next()) {
+					friends.add(rs.getString("friendID"));
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -120,7 +145,7 @@ public class MyPage_TestBed extends JFrame {
         int j = 300;
 //        int initialHeight = 0;
 //        int initialX = 0;
-        
+        int scrollHeight = 0;
         
         	JPanel Write = new JPanel();
         	layout.putConstraint(SpringLayout.NORTH, Write, 0, SpringLayout.NORTH, mainPanel);
@@ -144,6 +169,43 @@ public class MyPage_TestBed extends JFrame {
         	JLabel lblNewLabel_1 = new JLabel("%d\uB2D8, \uBB34\uC2A8 \uC0DD\uAC01\uC744 \uD558\uC2DC\uACE0 \uACC4\uC2E0\uAC00\uC694?");
         	lblNewLabel_1.setBounds(50, 0, 590, 50);
         	Write.add(lblNewLabel_1);
+        	
+        	for(int k = 0; k < friendCnt; k++) { // 친구목록 가지고오기
+    			JPanel Friend = new JPanel();
+    			
+    			GridBagLayout Friend_Layout = new GridBagLayout();
+    			Friend.setBackground(Color.WHITE);
+    			Friend.setOpaque(true);
+    			Friend.setBorder(BorderFactory.createEmptyBorder());
+    			
+    			Friend_Layout.columnWidths = new int[]{50, 0, 0};
+    			Friend_Layout.rowHeights = new int[]{50, 0};
+    			Friend_Layout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+    			Friend_Layout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+    			Friend.setLayout(Friend_Layout);
+    			
+    			JLabel lblNewLabel_10 = new JLabel("");
+        		lblNewLabel_10.setIcon(new ImageIcon("D:\\Downloads\\icons8-user-avatar-filled-50.png"));
+    			GridBagConstraints gbc_lblNewLabel_10 = new GridBagConstraints();
+    			gbc_lblNewLabel_10.insets = new Insets(0, 0, 0, 5);
+    			gbc_lblNewLabel_10.gridx = 0;
+    			gbc_lblNewLabel_10.gridy = 0;
+    			Friend.add(lblNewLabel_10, gbc_lblNewLabel_10);
+    			
+    			JLabel lblNewLabel_11 = new JLabel(friends.get(k));
+    			GridBagConstraints gbc_lblNewLabel_11 = new GridBagConstraints();
+    			gbc_lblNewLabel_11.gridx = 1;
+    			gbc_lblNewLabel_11.gridy = 0;
+    			Friend.add(lblNewLabel_11, gbc_lblNewLabel_11);
+    			
+    		      Friendlayout.putConstraint(SpringLayout.NORTH, Friend, scrollHeight, SpringLayout.NORTH,
+                          contentPane);			
+    		      
+    		      scrollHeight += 50;
+    		      Friend.setPreferredSize(new Dimension(280, 50));
+    		      friendPanel.add(Friend);
+    		    friendPanel.setPreferredSize(new Dimension(280, scrollHeight));
+    		}
         	
         for(int i =0;i<rowCnt;i++){
         	
@@ -398,7 +460,11 @@ public class MyPage_TestBed extends JFrame {
         
         JScrollPane friendScroll = new JScrollPane(); // 친구 리스트
         friendScroll.setBounds(110, 550, 280, 430);
+        friendScroll.setBackground(Color.WHITE);
+        
         frame.getContentPane().add(friendScroll);
+        
+        friendScroll.setViewportView(friendPanel);
         frame.setSize(1440, 1000);
 		frame.setUndecorated(true);
         frame.setVisible(true);
