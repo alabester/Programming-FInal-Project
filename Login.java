@@ -89,8 +89,7 @@ public class Login extends JFrame implements FocusListener {
 		setUndecorated(true);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		setBounds(200, 200, 900, 800);
-		setBounds(200, 20, 900, 800);
+		setBounds(200, 200, 900, 800);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -211,7 +210,6 @@ public class Login extends JFrame implements FocusListener {
 					lblNewLabel_3.setForeground(Color.BLUE);
 					lblNewLabel_3.setText("성공적으로 입력되었습니다.");
 					InsertQuery();
-					makeProfileQuery(); // 프로필 테이블 데이터 추가하는 SQL
 				}
 				else {
 				lblNewLabel_3.setForeground(Color.RED);
@@ -310,8 +308,10 @@ public class Login extends JFrame implements FocusListener {
 		  
 		  pstmtsqlInsert.executeUpdate();
 			
-		  } catch (Exception e) {
-			  e.printStackTrace();
+		  } catch (SQLException e) {
+				lblNewLabel_3.setForeground(Color.RED);
+				lblNewLabel_2.setIcon(new ImageIcon("D:\\Downloads\\icons8-high-priority-48 (1).png"));
+				lblNewLabel_3.setText("이미 있는 아이디입니다.");
 		  }
 
 	  }
@@ -374,14 +374,14 @@ public class Login extends JFrame implements FocusListener {
 		}
 	 }
 	  
-	 public void makeProfileQuery() { // 프로필 테이블 데이터 추가
-		 try {
-			 String SQL = "INSERT INTO profile(userID) VALUES(?)";
-			 PreparedStatement pstmt = con.prepareStatement(SQL);
-			 pstmt.setString(1, textField_2.getText());
-			 pstmt.executeUpdate();
-		 } catch (Exception e) {
-			  e.printStackTrace();
-		  }
-	 }
+	  public void makeProfileQuery() { // 프로필 테이블 데이터 추가
+			 try {
+				 String SQL = "INSERT INTO profile(userID) VALUES(?)";
+				 PreparedStatement pstmt = con.prepareStatement(SQL);
+				 pstmt.setString(1, textField_2.getText());
+				 pstmt.executeUpdate();
+			 } catch (Exception e) {
+				  e.printStackTrace();
+			  }
+	  }
 }

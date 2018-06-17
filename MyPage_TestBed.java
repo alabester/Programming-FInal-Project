@@ -90,12 +90,14 @@ public class MyPage_TestBed extends JFrame {
         JPanel mainPanel = new JPanel();
         JPanel friendPanel = new JPanel();
         JPanel searchPanel = new JPanel();
+        JPanel NothingPanel = new JPanel();
         
         searchPanel.setBackground(Color.WHITE);
         
         mainPanel.setLayout(layout);
-        friendPanel.setLayout(Friendlayout);
+        friendPanel.setLayout(Friendlayout);        
         searchPanel.setLayout(Searchlayout);
+        NothingPanel.setLayout(null);
 
         DBConnection();
 		
@@ -175,6 +177,11 @@ public class MyPage_TestBed extends JFrame {
         	JLabel lblNewLabel_1 = new JLabel("%d\uB2D8, \uBB34\uC2A8 \uC0DD\uAC01\uC744 \uD558\uC2DC\uACE0 \uACC4\uC2E0\uAC00\uC694?");
         	lblNewLabel_1.setBounds(50, 0, 590, 50);
         	Write.add(lblNewLabel_1);
+        	
+        	JLabel Nothing = new JLabel("해당하는 정보의 사람이 없습니다. 다르게 검색해 보시는게 어떠세요?");
+        	Nothing.setHorizontalAlignment(SwingConstants.CENTER);
+        	Nothing.setBounds(0,0,640,150);
+        	NothingPanel.add(Nothing);
         	
         	for(int k = 0; k < friendCnt; k++) { // 친구목록 가지고오기
     			JPanel Friend = new JPanel();
@@ -418,8 +425,8 @@ public class MyPage_TestBed extends JFrame {
 				}
 				 else { // 찾는 사람이 존재하지 않으면
 					 	
-//					scroll.setViewportView(NothingPanel);
-//	        			NothingPanel.setBackground(Color.WHITE);
+					scroll.setViewportView(NothingPanel);
+	        			NothingPanel.setBackground(Color.WHITE);
 	        			
 	        		}
 
@@ -509,9 +516,10 @@ public class MyPage_TestBed extends JFrame {
         JTextArea txtAreaProfile = new JTextArea();
         txtAreaProfile.setBounds(16, 64, 250, 300);
         profilePanel.add(txtAreaProfile);
-        txtAreaProfile.setText("this is txtarea");
+//        txtAreaProfile.setText("this is txtarea");
         
-        JLabel lblLabelProfile = new JLabel("this is label");
+//        JLabel lblLabelProfile = new JLabel("this is label");
+        JLabel lblLabelProfile = new JLabel("ex) 저는......");
         lblLabelProfile.setBounds(16, 64, 250, 300);
         profilePanel.add(lblLabelProfile);
         lblLabelProfile.setVerticalAlignment(SwingConstants.TOP);
@@ -601,7 +609,7 @@ public class MyPage_TestBed extends JFrame {
 	
 	  public void selectMyProfile(String userID, JLabel lblLabelProfile) {
 		  try {
-			  String SQL = "SELECT profileContent FROM profile WHERE userID = ?";
+			  String SQL = "SELECT profileContent FROM profile WHERE userID = ? AND profileContent is not null";
 //			  PreparedStatement pstmt = con.prepareStatement(SQL);
 			  PreparedStatement st = con.prepareStatement(SQL);
 			  st.setString(1, userID);
