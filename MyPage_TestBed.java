@@ -369,7 +369,10 @@ public class MyPage_TestBed extends JFrame {
         JButton btnProfileUpdateFocus = new JButton("추가");
         btnProfileUpdateFocus.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) { // 추가 버튼 클릭, 프로필 내용 업데이트 하는 화면으로 전환
+        		String profileText = lblLabelProfile.getText();
         		txtAreaProfile.setVisible(true);
+//        		txtAreaProfile.setText(profileText);
+        		txtAreaProfile.setText(profileText.replaceAll("<html>", "").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("<br/>", "\n").replaceAll("</html>", ""));
         		btnProfileUpdateFocus.setEnabled(false);
         		btnProfileUpdate.setVisible(true);
         	}
@@ -381,6 +384,7 @@ public class MyPage_TestBed extends JFrame {
         btnProfileUpdate.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) { // 확인 버튼 클릭, 프로필 내용 업데이트
         		String updateText = txtAreaProfile.getText();
+        		updatemyProfile(userID, updateText); // 프로필 내용 업데이트 SQL
         		lblLabelProfile.setText("<html>" + updateText.replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>"); // 작성한 내용들 lblLabelProfile에 추가
         		txtAreaProfile.setVisible(false);
         		lblLabelProfile.setVisible(true);
@@ -390,6 +394,7 @@ public class MyPage_TestBed extends JFrame {
         });
         btnProfileUpdate.setBounds(153, 361, 117, 29);
         profilePanel.add(btnProfileUpdate);
+        selectMyProfile(userID, lblLabelProfile);
         
         JScrollPane friendScroll = new JScrollPane(); // 친구 리스트
         friendScroll.setBounds(110, 550, 280, 430);
@@ -412,19 +417,47 @@ public class MyPage_TestBed extends JFrame {
 		public void InsertmyContent(String userID, String myContent) {
 		  try {
 		  	String InsertSQL = "insert into myinfo(myContentID, myUserID, myContent) values (?, ?, ?)";
-		  	PreparedStatement Insertpstmt = con.prepareStatement(InsertSQL);
-		  	Insertpstmt.setInt(1, FullrowCnt+1);
-		  	Insertpstmt.setString(2, userID);
-		  	Insertpstmt.setString(3, myContent);
-		  	Insertpstmt.executeUpdate();
+//		  	PreparedStatement Insertpstmt = con.prepareStatement(InsertSQL);
+		  	st = con.prepareStatement(InsertSQL);
+		  	st.setInt(1, FullrowCnt+1);
+		  	st.setString(2, userID);
+		  	st.setString(3, myContent);
+		  	st.executeUpdate();
 		  	
 		  } catch (Exception e) {
 			  e.printStackTrace();
 		  }
 	  }
 		
-		//public void updatemyProfile()
+	  public void updatemyProfile(String userID, String updateText) {
+		  try {
+				 String SQL = "UPDATE profile SET profileContent = ? WHERE userID = ?";
+//				  PreparedStatement pstmt = con.prepareStatement(SQL);
+				 PreparedStatement st = con.prepareStatement(SQL);
+				 st.setString(1, updateText);
+				 st.setString(2, userID);
+				 st.executeUpdate();
+			 } catch (Exception e) {
+				  e.printStackTrace();
+			  }
+		 }
 	
+	  public void selectMyProfile(String userID, JLabel lblLabelProfile) {
+		  try {
+			  String SQL = "SELECT profileContent FROM profile WHERE userID = ?";
+//			  PreparedStatement pstmt = con.prepareStatement(SQL);
+			  PreparedStatement st = con.prepareStatement(SQL);
+			  st.setString(1, userID);
+			  rs = st.executeQuery();
+			  if(rs.next()) {
+				  String profileContent = rs.getString("profileContent");
+				  lblLabelProfile.setText("<html>" + profileContent.replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>"); // 작성한 내용들 lblLabelProfile에 추가
+			  }
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+	 }
+	  
 	  public void DBConnection() {
 		  try {
 		  Class.forName("com.mysql.jdbc.Driver");
